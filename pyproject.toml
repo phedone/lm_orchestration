@@ -1,0 +1,29 @@
+[project]
+name = "lm-orchestration"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "llm-generation-service>=0.1.215",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.3",
+    "ty>=0.0.1a14",
+]
+
+[tool.uv.sources]
+generation-service = { workspace = true }
+
+[[tool.uv.index]]
+name = "internal-pypi"
+url = "https://pypi.diabolocom.ai"
+
+[tool.ty.rules]
+unresolved-import = "ignore"
+possibly-unbound-attribute = "ignore"
+
+[tool.ty.environment]
+python = "./.venv"
