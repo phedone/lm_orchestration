@@ -1,0 +1,70 @@
+name: Publish to PyPI
+
+on:
+  workflow_run:
+    workflows: [ "Pytest and Code Coverage Check" ]
+    types:
+      - completed
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-upload:
+    if: "contains(github.event.workflow_run.head_commit.message, 'chore(version):') || contains(github.event.head_commit.message, 'force(version):')"
+
+    env:
+      PYPI_USER: ${{ secrets.PYPI_USER }}
+      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      UV_INDEX_INTERNAL_PYPI_USERNAME: ${{ secrets.UV_INDEX_INTERNAL_PYPI_USERNAME }}
+      UV_INDEX_INTERNAL_PYPI_PASSWORD: ${{ secrets.UV_INDEX_INTERNAL_PYPI_PASSWORD }}
+      DOTENV_PRIVATE_KEY_CI: ${{ secrets.DOTENV_PRIVATE_KEY_CI }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.5"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install system dependencies
+        run: uv sync --all-groups
+
+      - name: clear existing package
+        run: rm -rf dist
+
+      - name: Build package
+        run: make build
+
+      - name: Debug - Check what's in the wheel
+        run: |
+          echo "=== Built files ==="
+          ls -la dist/
+          echo "=== Wheel contents (baml files) ==="
+          unzip -l dist/*.whl | grep baml || echo "No baml files found in wheel"
+          echo "=== All wheel contents ==="
+          unzip -l dist/*.whl
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+        with:
+          packages-dir: dist
+          user: ${{ secrets.PYPI_USER }}
+          password: ${{ secrets.PYPI_PASSWORD }}
+          repository-url: https://pypi.diabolocom.ai
+

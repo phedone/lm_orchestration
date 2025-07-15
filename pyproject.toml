@@ -1,0 +1,71 @@
+[project]
+name = "lm-orchestration"
+dynamic = ["version"]
+description = "Orchestration module for LLM generation service"
+author = "Diabolocom AI"
+
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "llm-generation-service>=0.1.221",
+    "numpy>=1.26.4",
+]
+
+[dependency-groups]
+dev = [
+    "hatchling>=1.27.0",
+    "mutmut>=3.3.0",
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.1.0",
+    "pytest-cov>=6.2.1",
+    "pytest-sugar>=1.0.0",
+    "ruff>=0.12.3",
+    "ty>=0.0.1a14",
+]
+
+# Tests and coverage settings
+[tool.pytest.ini_options]
+markers =[
+    'e2e: End-to-end tests that will require the LM endpoint url & api key to be set in the environment variables.',
+]
+
+[tool.coverage.run]
+omit = [
+    "genflow/__version__.py",
+]
+
+[[tool.uv.index]]
+name = "internal-pypi"
+url = "https://pypi.diabolocom.ai"
+
+
+[tool.ty.rules]
+unresolved-import = "ignore"
+possibly-unbound-attribute = "ignore"
+
+[tool.ty.environment]
+python = "./.venv"
+
+# Install & build
+[tool.uv.sources]
+llm-generation-service = { index = "internal-pypi" }
+promptlib = { index = "internal-pypi" }
+dblcsgen = { index = "internal-pypi" }
+genflow = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+include = [
+    "genflow/**",
+    "README.md"
+]
+
+[tool.hatch.version]
+path = "genflow/__version__.py"
+
+[tool.uv]
+cache-keys = [{ file = "genflow/__version__.py" }]
