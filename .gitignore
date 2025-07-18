@@ -139,5 +139,4 @@ venv.bak/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
-*/__version__.py
 mutants/*
