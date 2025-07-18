@@ -7,12 +7,10 @@ on:
       - completed
     branches:
       - main
-      - master
       - develop
   push:
     branches:
       - main
-      - master
       - develop
 
 jobs:
