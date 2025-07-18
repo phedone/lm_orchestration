@@ -140,3 +140,4 @@ venv.bak/
 .idea/
 
 */__version__.py
+mutants/*
