@@ -8,3 +8,6 @@ type-check:
 mutation-test:
 	uv run mutmut run
 	uv run rm -rf mutants
+
+build:
+	uv build --wheel

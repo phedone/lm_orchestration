@@ -44,6 +44,9 @@ jobs:
       - name: Install system dependencies
         run: uv sync --all-groups
 
+      - name: Build package
+        run: make build
+
       - name: Debug - Check what's in the wheel
         run: |
           echo "=== Built files ==="
