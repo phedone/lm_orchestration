@@ -10,7 +10,9 @@ from generation_service.llm_workflows.configuration.clients.baml_client import (
 from generation_service.llm_workflows.shared.data.available_languages import (
     AvailableLanguage,
 )
-from generation_service.llm_workflows.shared.traits.has_metadata import HasMetadata
+from generation_service.llm_workflows.shared.interfaces.generation_result import (
+    GenerationResult,
+)
 from generation_service.llm_workflows.tasks import GenerationAction
 
 from genflow.parsers.input import parse_input_identifiers
@@ -23,7 +25,7 @@ async def run_actions(
     lm_client: BamlGenerationClient,
     runnable_actions: Dict[GenerationAction, Dict[str, Any]],
     language: AvailableLanguage,
-) -> Dict[GenerationAction, HasMetadata]:
+) -> Dict[GenerationAction, GenerationResult]:
     async with TaskGroup() as group:
         actions = {
             action_id: group.create_task(

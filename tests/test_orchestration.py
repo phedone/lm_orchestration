@@ -20,7 +20,9 @@ from generation_service.llm_workflows.shared.data.available_languages import (
     AvailableLanguage,
 )
 from generation_service.llm_workflows.shared.data.metadata import GenerationMetadata
-from generation_service.llm_workflows.shared.traits.has_metadata import HasMetadata
+from generation_service.llm_workflows.shared.interfaces.generation_result import (
+    GenerationResult,
+)
 from generation_service.llm_workflows.tasks import GenerationAction
 from generation_service.llm_workflows.tasks.call_actions.data.call_actions_output import (
     CallActionsResult,
@@ -44,7 +46,7 @@ class TestOrchestration:
         action_id: GenerationAction,
         action_parameters: Dict[str, Any],
         language: AvailableLanguage,
-    ) -> HasMetadata:
+    ) -> GenerationResult:
         result = CallActionsResult(
             completion=CallActionsOutput(
                 actions_extraction_exhaustive_reasoning_detailed_paragraphs="During the call, the client reported an issue with their internet not functioning. The agent needs to troubleshoot this problem by guiding the client through a series of diagnostic and corrective steps. The conversation likely involved the agent instructing the client to check the modem, ensuring it is powered on and connected properly. If the issue persists, the agent may have suggested restarting the modem or checking the cables. The agent might have also verified the customer's account status to ensure there are no service outages or billing issues affecting the service. After the call, the agent is responsible for documenting the issue and any steps taken during the troubleshooting process. If the problem remains unresolved, the agent may schedule a technician visit or escalate the issue to a higher support tier. The client, on the other hand, is expected to perform the troubleshooting steps suggested by the agent during the call and report back the outcomes.",
