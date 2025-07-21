@@ -8,7 +8,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "dotenv>=0.9.9",
-    "llm-generation-service>=0.1.219",
+    "llm-generation-service>=0.1.221",
     "numpy>=1.26.4",
 ]
 

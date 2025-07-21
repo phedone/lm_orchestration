@@ -2,7 +2,9 @@ from typing import Dict, Any, Tuple, Iterable, cast
 
 import numpy as np
 from generation_service.llm_workflows.shared.data.metadata import GenerationMetadata
-from generation_service.llm_workflows.shared.traits.has_metadata import HasMetadata
+from generation_service.llm_workflows.shared.interfaces.generation_result import (
+    GenerationResult,
+)
 from generation_service.llm_workflows.tasks import GenerationAction
 
 ResultMetadataTuple = Tuple[Dict[str, Any], Dict[str, Any]]
@@ -63,13 +65,13 @@ def aggregate_metadata(
 
 
 def parse_result(
-    result: Dict[GenerationAction, HasMetadata],
+    result: Dict[GenerationAction, GenerationResult],
 ) -> ResultMetadataTuple:
     """
     Parse the output data to extract metadata and results and return them in the queued runner format.
 
     Args:
-        result: A dictionary where keys are GenerationAction identifiers and values are HasMetadata instances.
+        result: A dictionary where keys are GenerationAction identifiers and values are GenerationResult instances.
 
     Returns:
         A tuple containing two dictionaries:
@@ -81,12 +83,8 @@ def parse_result(
     all_metadata = [None] * len(result)
 
     for result_idx, (action_id, action_result) in enumerate(result.items()):
+        completion[action_id.value] = action_result.completion.to_dict()
         metadata[action_id.value] = action_result.metadata.to_dict()
-        completion[action_id.value] = {
-            field_name: field_value
-            for field_name, field_value in action_result.__dict__.items()
-            if field_name != "metadata"
-        }
         all_metadata[result_idx] = action_result.metadata
 
     metadata["aggregated"] = aggregate_metadata(

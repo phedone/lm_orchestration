@@ -9,7 +9,9 @@ from generation_service.llm_workflows.shared.data.available_languages import (
 from generation_service.llm_workflows.shared.data.transcript_based_input_parameters import (
     TranscriptBasedInputParameters,
 )
-from generation_service.llm_workflows.shared.traits.has_metadata import HasMetadata
+from generation_service.llm_workflows.shared.interfaces.generation_result import (
+    GenerationResult,
+)
 from generation_service.llm_workflows.tasks import GenerationAction
 from generation_service.llm_workflows.tasks.RAG.agent_suggestions.agent_suggestions import (
     AgentSuggestions,
@@ -132,7 +134,7 @@ async def run_generation_action(
     action_id: GenerationAction,
     action_parameters: Dict[str, Any],
     language: AvailableLanguage,
-) -> HasMetadata:
+) -> GenerationResult:
     match action_id:
         case GenerationAction.AUGMENTED_ANSWER_GENERATION:
             input_parameters = AugmentedGenerationInputParameters(

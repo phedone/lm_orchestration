@@ -12,7 +12,6 @@ def test_aggregate_metadata():
             input_wrap_tokens=10,
             completions_count=1,
             completion_time=2.0,
-            out_in_ratio=50 / 100,
             tokens_per_seconds=25,
         ),
         GenerationMetadata(
@@ -21,7 +20,6 @@ def test_aggregate_metadata():
             input_wrap_tokens=20,
             completions_count=2,
             completion_time=3.0,
-            out_in_ratio=100 / 200,
             tokens_per_seconds=33,
         ),
         GenerationMetadata(
@@ -30,7 +28,6 @@ def test_aggregate_metadata():
             input_wrap_tokens=15,
             completions_count=1,
             completion_time=1.0,
-            out_in_ratio=75 / 150,
             tokens_per_seconds=75,
         ),
     ]

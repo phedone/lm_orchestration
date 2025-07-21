@@ -1,15 +1,12 @@
 import asyncio
 import copy
-import logging
 import os
-import sys
 from typing import Dict, Any
 from unittest.mock import patch
 
 import pytest
 from dotenv import load_dotenv
 from generation_service.baml.baml_client.types import (
-    PhoneCallActions,
     ActionActor,
     PhoneCallAction,
 )
@@ -23,23 +20,16 @@ from generation_service.llm_workflows.shared.data.available_languages import (
     AvailableLanguage,
 )
 from generation_service.llm_workflows.shared.data.metadata import GenerationMetadata
-from generation_service.llm_workflows.shared.data.transcript_based_result import (
-    TranscriptBasedResult,
-)
 from generation_service.llm_workflows.shared.traits.has_metadata import HasMetadata
 from generation_service.llm_workflows.tasks import GenerationAction
+from generation_service.llm_workflows.tasks.call_actions.data.call_actions_output import (
+    CallActionsResult,
+    CallActionsOutput,
+)
 
 from genflow.main import orchestrate_generation
+from tests import test_logger
 from tests.mock import mock_transcript
-
-console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setLevel(logging.INFO)
-formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-console_handler.setFormatter(formatter)
-
-test_logger = logging.getLogger(__name__)
-test_logger.setLevel(logging.INFO)
-test_logger.addHandler(console_handler)
 
 
 class TestOrchestration:
@@ -55,8 +45,8 @@ class TestOrchestration:
         action_parameters: Dict[str, Any],
         language: AvailableLanguage,
     ) -> HasMetadata:
-        result = TranscriptBasedResult(
-            completion=PhoneCallActions(
+        result = CallActionsResult(
+            completion=CallActionsOutput(
                 actions_extraction_exhaustive_reasoning_detailed_paragraphs="During the call, the client reported an issue with their internet not functioning. The agent needs to troubleshoot this problem by guiding the client through a series of diagnostic and corrective steps. The conversation likely involved the agent instructing the client to check the modem, ensuring it is powered on and connected properly. If the issue persists, the agent may have suggested restarting the modem or checking the cables. The agent might have also verified the customer's account status to ensure there are no service outages or billing issues affecting the service. After the call, the agent is responsible for documenting the issue and any steps taken during the troubleshooting process. If the problem remains unresolved, the agent may schedule a technician visit or escalate the issue to a higher support tier. The client, on the other hand, is expected to perform the troubleshooting steps suggested by the agent during the call and report back the outcomes.",
                 actions=[
                     PhoneCallAction(
@@ -77,19 +67,12 @@ class TestOrchestration:
                 completions_count=1,
                 completion_time=4.439,
                 tokens_per_seconds=140,
-                out_in_ratio=622 / 15,
             ),
-            task_key="to_be_defined",
         )
 
         call_actions_result = copy.deepcopy(result)
-        call_actions_result.task_key = "call_actions"
-
         call_reason_result = copy.deepcopy(result)
-        call_reason_result.task_key = "call_reason"
-
         call_segments_result = copy.deepcopy(result)
-        call_segments_result.task_key = "call_segments"
 
         action_results = {
             GenerationAction.CALL_ACTIONS: call_actions_result,
@@ -193,11 +176,11 @@ class TestOrchestration:
             with patch(
                 target="genflow.tools.runnable_analysis.get_dependencies",
                 side_effect=lambda action: mock_dependencies[action],
-            ) as mock_get_deps:
+            ):
                 with patch(
                     target="genflow.main.run_generation_action",
                     side_effect=self.mock_run_generation_action,
-                ) as mock_action_execution:
+                ):
                     result, metadata = await orchestrate_generation(
                         lm_client=self.mock_lm_client,
                         input_data=input_data,

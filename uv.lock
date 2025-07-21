@@ -611,7 +611,7 @@ wheels = [
 
 [[package]]
 name = "llm-generation-service"
-version = "0.1.219"
+version = "0.1.221"
 source = { registry = "https://pypi.diabolocom.ai/" }
 dependencies = [
     { name = "baml-py" },
@@ -627,7 +627,7 @@ dependencies = [
     { name = "tokenizers" },
 ]
 wheels = [
-    { url = "https://pypi.diabolocom.ai/packages/llm_generation_service-0.1.219-py3-none-any.whl", hash = "sha256:dd7bd76bf4af4f186f2bd5a2483cce6badfe497ffe33eb1be4a230b29a82fab5" },
+    { url = "https://pypi.diabolocom.ai/packages/llm_generation_service-0.1.221-py3-none-any.whl", hash = "sha256:2db6d07d002931d4b464900c94effd3206748b25a8992748f576c3d93f8e6efc" },
 ]
 
 [[package]]
@@ -655,7 +655,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "dotenv", specifier = ">=0.9.9" },
-    { name = "llm-generation-service", specifier = ">=0.1.219", index = "https://pypi.diabolocom.ai/" },
+    { name = "llm-generation-service", specifier = ">=0.1.221", index = "https://pypi.diabolocom.ai/" },
     { name = "numpy", specifier = ">=1.26.4" },
 ]
 
