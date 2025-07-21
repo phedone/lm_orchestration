@@ -58,9 +58,6 @@ genflow = { workspace = true }
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.hatch.version]
-path = "genflow/__version__.py"
-
 [tool.hatch.build]
 include = [
     "genflow/**",
