@@ -44,6 +44,9 @@ jobs:
       - name: Install system dependencies
         run: uv sync --all-groups
 
+      - name: clear existing package
+        run: rm -rf dist
+
       - name: Build package
         run: make build
 
