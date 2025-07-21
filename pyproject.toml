@@ -1,6 +1,6 @@
 [project]
 name = "lm-orchestration"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Orchestration module for LLM generation service"
 author = "Diabolocom AI"
 
@@ -64,7 +64,8 @@ include = [
     "README.md"
 ]
 
-[tool.uv]
-cache-keys = [{ file = "genflow/__version__.py" }]
 [tool.hatch.version]
 path = "genflow/__version__.py"
+
+[tool.uv]
+cache-keys = [{ file = "genflow/__version__.py" }]
