@@ -1,0 +1,66 @@
+name: Pytest and Code Coverage Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  insure_test_and_code_coverage:
+    if: "!contains(github.event.workflow_run.head_commit.message, 'no-test') && !contains(github.event.head_commit.message, 'no-test')"
+    runs-on: ubuntu-latest
+
+    env:
+      PYPI_USER: ${{ secrets.PYPI_USER }}
+      PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      UV_INDEX_INTERNAL_PYPI_USERNAME: ${{ secrets.UV_INDEX_INTERNAL_PYPI_USERNAME }}
+      UV_INDEX_INTERNAL_PYPI_PASSWORD: ${{ secrets.UV_INDEX_INTERNAL_PYPI_PASSWORD }}
+      DOTENV_PRIVATE_KEY_CI: ${{ secrets.DOTENV_PRIVATE_KEY_CI }}
+
+    steps:
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libsnappy-dev
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.5"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: Set up dotenvx
+        # Run curl command to download dotenvx curl -sfS https://dotenvx.sh | sh
+        run: curl -sfS https://dotenvx.sh | sh
+
+      - name: Install the project
+        run: uv sync --dev
+
+      - name: Run type-checker
+        run: make type-check
+
+      - name: Run tests with coverage
+        run: dotenvx run -f .env.ci -- make test
+
+      - name: Check coverage
+        run: |
+          coverage=$(coverage report --fail-under=80 | grep TOTAL | awk '{print $NF}' | tr -d '%')
+          if [ "$coverage" -lt 80 ]; then
+            echo "Code coverage is less than 80%."
+            exit 1
+          else
+            echo "Code coverage is more than 80%."
+          fi
